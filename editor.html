@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#2d7a3a">
+  <title>録画 – Tactics Board</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="manifest" href="manifest.webmanifest">
+</head>
+<body>
+  <header class="app-header">
+    <button class="btn-icon" id="btn-back">←</button>
+    <h1 id="page-title">作戦を録画</h1>
+  </header>
+
+  <main class="main-content">
+    <!-- Board -->
+    <div class="board-container">
+      <svg id="board-svg"></svg>
+    </div>
+
+    <!-- 録画フェーズ -->
+    <div id="record-phase">
+      <div class="record-bar">
+        <button class="btn btn-outline" id="btn-reset">初期配置</button>
+        <span class="record-timer" id="timer">0:00</span>
+        <button class="btn-record" id="btn-record">録画開始</button>
+      </div>
+    </div>
+
+    <!-- 保存フェーズ（録画後に表示） -->
+    <div id="save-phase" style="display:none">
+      <div class="player-controls">
+        <input type="range" class="seekbar" id="seekbar" value="0" min="0" step="50">
+        <div class="player-btns">
+          <button class="btn-play" id="btn-play">▶</button>
+          <button class="speed-btn" data-speed="0.5">0.5×</button>
+          <button class="speed-btn active" data-speed="1">1×</button>
+          <button class="speed-btn" data-speed="2">2×</button>
+        </div>
+        <div class="time-display">
+          <span id="current-time">0:00</span> / <span id="total-time">0:00</span>
+        </div>
+      </div>
+
+      <div class="save-form">
+        <div class="form-group">
+          <label for="input-title">タイトル *</label>
+          <input type="text" id="input-title" placeholder="例：サイドからの崩し" maxlength="100">
+        </div>
+        <div class="form-group">
+          <label for="input-desc">解説</label>
+          <textarea id="input-desc" placeholder="この戦術のポイントを書いてください..." maxlength="1000"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="input-author">投稿者名</label>
+          <input type="text" id="input-author" placeholder="コーチA" maxlength="50">
+        </div>
+        <div class="save-actions">
+          <button class="btn btn-outline" id="btn-redo">録画し直す</button>
+          <button class="btn btn-primary" id="btn-save" style="flex:1">保存して共有 →</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast" id="toast"></div>
+  <script type="module" src="src/pages/editor.js"></script>
+</body>
+</html>

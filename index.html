@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#2d7a3a">
+  <title>Tactics Board</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="manifest" href="manifest.webmanifest">
+</head>
+<body>
+  <header class="app-header">
+    <h1>⚽ Tactics Board</h1>
+  </header>
+  <main class="main-content">
+    <p class="section-label">競技を選択</p>
+    <div class="sport-cards" id="sport-list"></div>
+    <p class="section-label" id="recent-label" style="display:none">最近の作品</p>
+    <div class="recent-list" id="recent-list"></div>
+  </main>
+  <script type="module" src="src/pages/home.js"></script>
+</body>
+</html>
