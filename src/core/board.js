@@ -36,6 +36,7 @@ export class Board {
         el = document.createElementNS(NS, 'rect');
         el.setAttribute('x', line.x); el.setAttribute('y', line.y);
         el.setAttribute('width', line.w); el.setAttribute('height', line.h);
+        if (line.style === 'dashed') el.setAttribute('class', 'dashed');
       } else if (line.type === 'goal') {
         el = document.createElementNS(NS, 'rect');
         el.setAttribute('x', line.x); el.setAttribute('y', line.y);

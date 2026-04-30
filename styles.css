@@ -97,6 +97,9 @@ body {
   fill: var(--pitch-line);
   stroke: none;
 }
+.field-lines .dashed {
+  stroke-dasharray: 0.5, 0.5;
+}
 
 /* Pieces */
 .piece { cursor: grab; }
