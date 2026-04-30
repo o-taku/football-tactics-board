@@ -12,44 +12,46 @@ function sanitize(str, maxLen) {
   return str.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, '').trim().slice(0, maxLen);
 }
 
-function json(status, body, extra = {}) {
-  return {
-    statusCode: status,
-    headers: { 'Content-Type': 'application/json', ...extra },
-    body: JSON.stringify(body),
-  };
-}
-
-export async function handler(event) {
-  const method = event.httpMethod;
+export default async (req) => {
+  const method = req.method;
   const tacticsStore = getStore('tactics');
   const commentsStore = getStore('comments');
 
   if (method === 'GET') {
-    const tacticId = event.queryStringParameters?.tacticId;
-    if (!tacticId) return json(400, { error: 'Missing tacticId' });
+    const url = new URL(req.url);
+    const tacticId = url.searchParams.get('tacticId');
+    if (!tacticId) return Response.json({ error: 'Missing tacticId' }, { status: 400 });
 
     const comments = await commentsStore.get(tacticId, { type: 'json' }).catch(() => []);
-    return json(200, { comments: comments || [] }, { 'Cache-Control': 'no-store' });
+    return new Response(JSON.stringify({ comments: comments || [] }), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-store',
+      },
+    });
   }
 
   if (method === 'POST') {
-    const ct = event.headers?.['content-type'] ?? '';
-    if (!ct.includes('application/json')) return json(415, { error: 'Content-Type must be application/json' });
+    const ct = req.headers.get('content-type') ?? '';
+    if (!ct.includes('application/json')) {
+      return Response.json({ error: 'Content-Type must be application/json' }, { status: 415 });
+    }
 
     let data;
-    try { data = JSON.parse(event.body); }
-    catch { return json(400, { error: 'Invalid JSON' }); }
+    try { data = JSON.parse(await req.text()); }
+    catch { return Response.json({ error: 'Invalid JSON' }, { status: 400 }); }
 
     const { tacticId, name, body: commentBody } = data;
-    if (!tacticId) return json(400, { error: 'Missing tacticId' });
-    if (!commentBody?.trim()) return json(400, { error: 'Comment body required' });
+    if (!tacticId) return Response.json({ error: 'Missing tacticId' }, { status: 400 });
+    if (!commentBody?.trim()) return Response.json({ error: 'Comment body required' }, { status: 400 });
 
     const tactic = await tacticsStore.get(tacticId, { type: 'json' }).catch(() => null);
-    if (!tactic) return json(404, { error: 'Tactic not found' });
+    if (!tactic) return Response.json({ error: 'Tactic not found' }, { status: 404 });
 
     const comments = (await commentsStore.get(tacticId, { type: 'json' }).catch(() => null)) ?? [];
-    if (comments.length >= LIMITS.maxComments) return json(429, { error: 'Comment limit reached' });
+    if (comments.length >= LIMITS.maxComments) {
+      return Response.json({ error: 'Comment limit reached' }, { status: 429 });
+    }
 
     const comment = {
       id: randomUUID().slice(0, 8),
@@ -60,8 +62,12 @@ export async function handler(event) {
 
     comments.push(comment);
     await commentsStore.setJSON(tacticId, comments);
-    return json(201, { comment });
+    return Response.json({ comment }, { status: 201 });
   }
 
-  return json(405, { error: 'Method not allowed' });
-}
+  return Response.json({ error: 'Method not allowed' }, { status: 405 });
+};
+
+export const config = {
+  path: '/api/comments',
+};
