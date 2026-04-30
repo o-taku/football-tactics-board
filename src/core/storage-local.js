@@ -1,4 +1,4 @@
-const KEY = 'tactics-board-recents';
+const KEY = 'football-tactics-board-recents';
 
 export const localStore = {
   getRecents() {

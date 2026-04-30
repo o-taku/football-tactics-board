@@ -1,4 +1,4 @@
-const CACHE = 'tactics-board-v1';
+const CACHE = 'football-tactics-board-v1';
 const SHELL = [
   '/',
   '/index.html',
