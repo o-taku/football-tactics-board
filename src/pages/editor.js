@@ -150,6 +150,9 @@ class EditorApp {
 
   _redo() {
     this.player?.pause();
+    const lastPositions = this.recording?.frames.length > 0
+      ? this.recording.frames[this.recording.frames.length - 1].p
+      : null;
     this.recording = null;
     this.els.savePhase.style.display = 'none';
     this.els.recordPhase.style.display = '';
@@ -157,6 +160,9 @@ class EditorApp {
     this.els.btnRecord.classList.remove('recording');
     this.els.btnRecord.textContent = '録画開始';
     this._initBoard();
+    if (lastPositions) {
+      this.board.setPositions(lastPositions);
+    }
   }
 
   async _save() {
